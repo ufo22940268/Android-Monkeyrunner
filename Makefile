@@ -4,7 +4,7 @@
 #
 
 all:
-	monkeyrunner a.py
+	monkeyrunner a.py auto
 
 
 # vim:ft=make

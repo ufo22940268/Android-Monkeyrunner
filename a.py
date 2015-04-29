@@ -13,10 +13,13 @@
 
 import os
 import random
+import sys
 from com.android.monkeyrunner import MonkeyRunner, MonkeyDevice, MonkeyImage
 
 height = 480
 width = 800
+
+dialogMode = False
 
 class Apk:
     def __init__(self, path, package):
@@ -42,7 +45,8 @@ def testApk():
         device.installPackage(apk.path)
         device.removePackage(apk.package)
 
-    showDialog()
+    if dialogMode:
+        showDialog()
 
 
 def testSwitchSpace():
@@ -51,7 +55,8 @@ def testSwitchSpace():
     for _ in range(5):
         device.drag((0, height/2), (width*(1 if random.random() > 0.5 else -1), height/2))
 
-    showDialog()
+    if dialogMode:
+        showDialog()
 
 def showDialog():
     result = MonkeyRunner.choice(u"选择你要测试的项目", ["Apk install and uninstall", "swap workspace"], u"测试")
@@ -60,4 +65,14 @@ def showDialog():
     else:
         testSwitchSpace()
 
-showDialog()
+if __name__ == "__main__":
+    if len(sys.argv) != 2 or sys.argv[1] not in ['dialog', 'auto']:
+        print("Usage:\n monkeyrunner a.py [dialog|auto]")
+    elif sys.argv[1] == 'dialog':
+        dialogMode = True
+        showDialog()
+    elif sys.argv[1] == 'auto':
+        dialogMode = False
+        testApk()
+        testSwitchSpace()
+
